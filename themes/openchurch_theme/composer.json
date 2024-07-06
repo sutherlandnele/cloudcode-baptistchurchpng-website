@@ -1,0 +1,16 @@
+{
+  "name": "drupal/openchurch_theme",
+  "description": "OpenChurch base theme.",
+  "type": "drupal-theme",
+  "license": "GPL-2.0-or-later",
+  "homepage": "https://www.drupal.org/project/openchurch_theme",
+  "keywords": [
+    "Drupal",
+    "OpenChurch",
+    "Theme"
+  ],
+  "authors": [{
+    "name": "Jay Callicott",
+    "role": "Developer"
+  }]
+}

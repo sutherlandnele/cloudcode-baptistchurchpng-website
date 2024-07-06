@@ -1,0 +1,32 @@
+/**
+ * @file
+ * Provides admin blazy layout modal to reduce description distractions.
+ */
+
+/* stylelint-disable selector-max-id, declaration-no-important */
+.form-item--collapsidesc,
+.form-item--collapsidesc > div {
+  margin: 0 !important;
+}
+
+.form-item--collapsidesc > div {
+  max-width: 100% !important;
+}
+
+.form-item--collapsidesc > div > details {
+  box-shadow: none !important;
+}
+
+.form-item--collapsidesc > div > details summary {
+  display: block !important;
+  text-align: right !important;
+}
+
+.form-item--collapsidesc > div > details summary::after {
+  display: none !important;
+}
+
+.form-item--collapsidesc details > div {
+  padding-right: 0 !important;
+  padding-left: 0 !important;
+}

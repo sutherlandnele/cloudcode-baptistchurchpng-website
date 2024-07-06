@@ -1,0 +1,27 @@
+{# themes/custom/openchurch/templates/views/views-view-openchurch_theme_views_block__our_churches_slideshow_block_1.html.twig #}
+
+<div class="slick-carousel">
+  {% for row in rows %}
+    <div class="slide">
+      <img src="{{ file_url(row.content['#node'].field_slide_image.entity.uri.value) }}" alt="{{ row.content['#node'].field_slide_image.alt }}">
+      <h2>{{ row.content['#node'].field_slide_title.value }}</h2>
+      <div class="slide-body">{{ row.content['#node'].field_slide_body.value }}</div>
+      <a href="{{ row.content['#node'].field_slide_link.uri }}">{{ row.content['#node'].field_slide_link.title }}</a>
+    </div>
+  {% endfor %}
+</div>
+
+<script>
+  jQuery(document).ready(function($){
+    $('.slick-carousel').slick({
+      infinite: true,
+      slidesToShow: 1,
+      slidesToScroll: 1,
+      autoplay: true,
+      autoplaySpeed: 2000,
+      dots: true,
+      arrows: true
+    });
+  });
+</script>
+

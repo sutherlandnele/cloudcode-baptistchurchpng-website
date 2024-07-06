@@ -1,0 +1,13 @@
+name: Slick Example
+type: module
+description: 'Provides Slick Carousel examples.'
+core_version_requirement: '>=9.4'
+package: Slick
+dependencies:
+  - slick_extras:slick_extras
+  - slick_views:slick_views (>= 3.x)
+
+# Information added by Drupal.org packaging script on 2024-04-28
+version: '2.0.1'
+project: 'slick_extras'
+datestamp: 1714298914

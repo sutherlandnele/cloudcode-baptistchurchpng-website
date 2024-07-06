@@ -1,0 +1,45 @@
+leaflet_layers.map_bundle.*:
+  type: config_entity
+  label: "Map bundle config"
+  mapping:
+    id:
+      type: string
+      label: "ID"
+    label:
+      type: label
+      label: "Label"
+    uuid:
+      type: string
+    layers:
+      type: mapping
+      label: "Layers"
+      mapping:
+        id:
+          type: string
+          label: "ID"
+        label:
+          type: string
+          label: "Label"
+        module:
+          type: string
+          label: "Module"
+        layer_id:
+          type: string,
+          label: "Layer ID"
+        map_bundle:
+          type: string,
+          label: "Map Bundle"
+        enabled:
+          type: boolean
+          label: "Enabled"
+        on_by_default:
+          type: boolean
+          label: "On by default"
+        weight:
+          type: integer
+          label: "Weight"
+    settings:
+      type: sequence
+      label: "Settings"
+      sequence:
+        type: "[%parent.%parent.%type].settings.[%key]"

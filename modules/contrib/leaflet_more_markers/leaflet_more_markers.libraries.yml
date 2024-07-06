@@ -1,0 +1,32 @@
+leaflet_more_markers_form:
+  header: false
+  js:
+    js/fgEmojiPicker.min.js: {}
+    js/leaflet_more_markers_emoji_picker.js: {}
+  css:
+    component:
+      css/leaflet_more_markers_form.css: {}
+
+leaflet_more_markers_display:
+  version: VERSION
+  css:
+    component:
+      css/leaflet_more_markers.css: {}
+
+font_icons_bootstrap:
+  version: 1.3.0
+  css:
+    component:
+      https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css: {}
+
+font_icons_fontawesome:
+  version: 5.15.2
+  css:
+    component:
+      https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css: {}
+
+font_icons_lineawesome:
+  version: 1.3.0
+  css:
+    component:
+      https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css: {}

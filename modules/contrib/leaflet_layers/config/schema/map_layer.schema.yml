@@ -1,0 +1,26 @@
+leaflet_layers.map_layer.*:
+  type: config_entity
+  label: 'Map layer config'
+  mapping:
+    id:
+      type: string
+      label: 'ID'
+    label:
+      type: label
+      label: 'Label'
+    description:
+      type: string
+      label: 'Description'
+    uuid:
+      type: string
+    settings:
+      type: mapping
+      urlTemplate:
+        type: string
+        label: 'urlTemplate'
+      attribution:
+        type: string
+        label: 'Attribution'
+      layer_type:
+        type: string
+        label: 'Layer Type'

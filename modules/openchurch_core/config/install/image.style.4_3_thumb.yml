@@ -1,0 +1,15 @@
+uuid: ee1aa407-153f-4741-848b-a9a04978d558
+langcode: en
+status: true
+dependencies: {  }
+name: 4_3_thumb
+label: '4:3 thumb'
+effects:
+  0150d2b4-23ae-48bb-adb5-532bb7ee23c0:
+    uuid: 0150d2b4-23ae-48bb-adb5-532bb7ee23c0
+    id: image_scale_and_crop
+    weight: 1
+    data:
+      width: 640
+      height: 480
+      anchor: center-center

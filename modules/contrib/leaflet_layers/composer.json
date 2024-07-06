@@ -1,0 +1,21 @@
+{
+  "name": "drupal/leaflet_layers",
+  "description": "Provide configurable config for Leaflet.",
+  "type": "drupal-module",
+  "homepage": "https://www.drupal.org/project/leaflet_layers/",
+  "authors": [
+    {
+      "name": "See contributors",
+      "homepage": "https://www.drupal.org/node/3164541/committers"
+    }
+  ],
+  "support": {
+    "issues": "https://www.drupal.org/project/issues/leaflet_layers",
+    "source": "https://git.drupalcode.org/project/leaflet_layers"
+  },
+  "license": "GPL-2.0+",
+  "minimum-stability": "dev",
+  "require": {
+    "drupal/leaflet": "^2.0 || ^10.0"
+  }
+}

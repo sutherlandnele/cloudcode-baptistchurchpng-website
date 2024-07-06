@@ -1,0 +1,14 @@
+name: Leaflet More Markers
+type: module
+description: Allows every location to feature its own emoji marker or font icon.
+package: Geofield
+core_version_requirement: ^9.3 || ^10
+dependencies:
+  - leaflet:leaflet
+  - token:token
+
+
+# Information added by Drupal.org packaging script on 2022-11-27
+version: '1.1.2'
+project: 'leaflet_more_markers'
+datestamp: 1669563079

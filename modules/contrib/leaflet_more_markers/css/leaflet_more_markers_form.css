@@ -1,0 +1,5 @@
+/* Leaflet More Markers content edit form styles */
+
+.trigger-emoji-picker + div {
+  display: inline-block;
+}

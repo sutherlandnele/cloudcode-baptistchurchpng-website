@@ -1,0 +1,12 @@
+name: 'Leaflet Layers'
+type: module
+description: 'Provide configurable config for Leaflet'
+core_version_requirement: ^8.8 || ^9 || ^10
+package: 'Geofield'
+dependencies:
+  - leaflet:leaflet
+
+# Information added by Drupal.org packaging script on 2022-12-25
+version: '1.1.4'
+project: 'leaflet_layers'
+datestamp: 1671980900

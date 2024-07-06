@@ -1,0 +1,29 @@
+
+Blazy Layout 3.x-dev, 2024-04-27
+--------------------------------
+- Added responsive max-width option.
+- Added Edge to edge option.
+- Changed region background image to be optional for just background color.
+- Changed problematic opacity to color alpha channel.
+- Changed background image to be optional for just background color.
+- Fixed for problematic text opacity selector.
+
+Blazy Layout 3.x-dev, 2024-04-26
+--------------------------------
+- Added Blazy layout live preview.
+- Fixed for Blazy layout ID, requires saving form.
+- Moved complex admin inline style into JS-generated CSS.
+- Added link colors.
+
+Blazy Layout 3.x-dev, 2024-04-25
+--------------------------------
+- Fixed for region classes.
+
+Blazy Layout 3.x-dev, 2024-04-22
+--------------------------------
+- Added color style options for Blazy layout.
+- Renamed classes for clarity.
+
+Blazy Layout 3.x-dev, 2024-04-12
+--------------------------------
+- Initial 3.x commit.

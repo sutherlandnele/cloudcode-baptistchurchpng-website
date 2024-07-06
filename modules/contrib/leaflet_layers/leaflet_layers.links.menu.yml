@@ -1,0 +1,21 @@
+leaflet_layers.menu_parent:
+  title: 'Leaflet Layers'
+  route_name: leaflet_layers.overview
+  description: 'Configure layers for Leaflet'
+  parent: system.admin_structure
+
+# Map bundle menu items definition
+entity.map_bundle.collection:
+  title: 'Map bundles'
+  route_name: entity.map_bundle.collection
+  description: 'Create and manage bundles of leaflet layers'
+  parent: leaflet_layers.menu_parent
+  weight: 99
+
+# Map layer menu items definition
+entity.map_layer.collection:
+  title: 'Map layers'
+  route_name: entity.map_layer.collection
+  description: 'Create custom layers for leaflet maps'
+  parent: leaflet_layers.menu_parent
+  weight: 99

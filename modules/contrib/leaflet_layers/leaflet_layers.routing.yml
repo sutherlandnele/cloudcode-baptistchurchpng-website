@@ -1,0 +1,7 @@
+leaflet_layers.overview:
+  path: '/admin/structure/leaflet_layers'
+  defaults:
+    _controller: '\Drupal\system\Controller\SystemController::systemAdminMenuBlockPage'
+    _title: 'Leaflet Layers'
+  requirements:
+    _permission: 'access administration pages'

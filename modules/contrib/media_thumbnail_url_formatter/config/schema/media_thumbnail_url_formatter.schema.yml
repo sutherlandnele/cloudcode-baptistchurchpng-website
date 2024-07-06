@@ -1,0 +1,7 @@
+field.formatter.settings.media_thumbnail_url:
+  type: field.formatter.settings.media_thumbnail
+  label: 'Media thumbnail url formatter field display format settings'
+  mapping:
+    absolute:
+      type: boolean
+      label: 'Absolute URL'

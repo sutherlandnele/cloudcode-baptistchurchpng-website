@@ -1,0 +1,4 @@
+
+Slick Paragraphs 3.x-dev, 2023-09-18
+------------------------------------
+- Initial 3.x commit.

@@ -1,0 +1,3 @@
+/* @license GPL-2.0-or-later https://www.drupal.org/licensing/faq */
+.node-preview-container{background:#333;color:#fff;font-family:Arial,sans-serif;box-shadow:0 1px 3px 1px rgba(0,0,0,0.3333);position:initial;z-index:499;width:100%;padding:10px;}@media only screen and (min-width:36em){.node-preview-container .form-type-select{margin-left:20px;}[dir="rtl"] .node-preview-container .form-type-select{margin-right:20px;margin-left:0;}}
+.hero .card.bg-dark{border-radius:0;}.hero .card{position:relative;}.hero img{min-height:400px;max-height:600px;object-fit:cover;}.hero video{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;}@media (max-width:768px){.hero video{display:none;}}

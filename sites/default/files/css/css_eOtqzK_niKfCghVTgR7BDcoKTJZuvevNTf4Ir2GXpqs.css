@@ -1,0 +1,3 @@
+/* @license GPL-2.0-or-later https://www.drupal.org/licensing/faq */
+.is-b-oembed{overflow:hidden;}.is-b-oembed iframe{overflow:hidden;max-width:100%;height:100vh;border:0;}
+iframe{position:absolute;top:0;left:0;width:100%;height:100%;margin:0;}

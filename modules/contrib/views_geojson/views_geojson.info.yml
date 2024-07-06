@@ -1,0 +1,14 @@
+name: Views GeoJSON
+type: module
+description: Provides a Views feed style for GeoJSON output.
+core_version_requirement: ^8 || ^9 || ^10
+package: Views
+dependencies:
+  - drupal:views
+  - drupal:serialization
+  - drupal:rest
+
+# Information added by Drupal.org packaging script on 2022-09-16
+version: '8.x-1.2'
+project: 'views_geojson'
+datestamp: 1663370949

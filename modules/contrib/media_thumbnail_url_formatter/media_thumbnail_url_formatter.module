@@ -1,0 +1,28 @@
+<?php
+
+/**
+ * @file
+ * Primary module hooks for Media thumbnail URL formatter module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function media_thumbnail_url_formatter_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the block module.
+    case 'help.page.media_thumbnail_url_formatter':
+      $output = '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('This module adds a URL formatter for a media reference field. This allows site builders to output the URL to the thumbnail of the media entity and also allows to choose the image style to use for the thumbnail.') . '</p>';
+      $output .= '<h4>' . t('Usage') . '</h4>';
+      $output .= '<ul>';
+      $output .= '<li>' . t('Add a media reference field to an entity.') . '</li>';
+      $output .= '<li>' . t('Go to "Manage display" settings for the entity.') . '</li>';
+      $output .= '<li>' . t('Choose "Thumbnail URL" as the formatter.') . '</li>';
+      $output .= '<li>' . t('Select image style from the settings.') . '</li>';
+      $output .= '</ul>';
+      return $output;
+  }
+}

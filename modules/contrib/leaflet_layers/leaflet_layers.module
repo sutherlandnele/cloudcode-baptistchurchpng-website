@@ -1,0 +1,145 @@
+<?php
+
+/**
+ * @file
+ * Contains leaflet_layers.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\leaflet_layers\Entity\MapBundle;
+use Drupal\leaflet_layers\Entity\MapLayer;
+use Drupal\Component\Plugin\Exception\PluginException;
+
+/**
+ * Implements hook_help().
+ */
+function leaflet_layers_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the leaflet_layers module.
+    case 'help.page.leaflet_layers':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Provide configurable config for Leaflet') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_leaflet_map_info().
+ */
+function leaflet_layers_leaflet_map_info() {
+  $bundles = MapBundle::loadMultiple();
+  $hook_data = [];
+  foreach ($bundles as $bundle) {
+    $item = [
+      'label' => $bundle->label(),
+      'description' => '',
+      'settings' => $bundle->getSettings(),
+      'layers' => [],
+      'leaflet_layers' => TRUE,
+    ];
+
+    $layers = $bundle->getLayers();
+
+    uasort($layers, function ($a, $b) {
+      if ($a['weight'] == $b['weight']) {
+        return 0;
+      }
+      return ($a['weight'] < $b['weight']) ? -1 : 1;
+    });
+
+    foreach ($layers as $layer) {
+      if ($layer['module'] !== 'leaflet_layers') {
+        $layer_data = \Drupal::moduleHandler()->invoke($layer['module'], 'leaflet_map_info');
+
+        $layer_name = $layer['id'];
+        if ($layer['label'] !== '') {
+          $layer_name = $layer['label'];
+        }
+
+        $item['layers'][$layer_name] = $layer_data[$layer['map_bundle']]['layers'][$layer['layer_id']];
+
+        if (isset($item['layers'][$layer_name]['layer_type']) && $item['layers'][$layer_name]['layer_type'] == 'overlay') {
+          $on_by_default = is_null($layer['on_by_default']) ? FALSE : $layer['on_by_default'];
+          $item['layers'][$layer_name]['layer_hidden'] = $on_by_default;
+        }
+
+      }
+      else {
+        $layerEntity = MapLayer::load($layer['layer_id']);
+
+        $settings = $layerEntity->getSettings();
+        $plugin_type = $settings['plugin_type'] ?? 'tilelayer';
+        unset($settings['plugin_type']);
+
+        $info = leaflet_layers_get_plugin_info($plugin_type);
+        foreach ($info['settings'] as $key => $setting) {
+          if ($setting['#type'] == 'checkbox' && isset($settings[$key])) {
+            $settings[$key] = $settings[$key] ? TRUE : FALSE;
+          }
+        }
+
+        $layerItem = [
+          'urlTemplate' => $layerEntity->getUrlTemplate(),
+          'options' => $settings,
+        ];
+
+        $layer_name = $layerEntity->label();
+        if ($layer['label'] !== '') {
+          $layer_name = $layer['label'];
+        }
+
+        $layerItem['type'] = $plugin_type;
+
+        if ($layerEntity->getSetting('layer_type', FALSE)) {
+          $layerItem['layer_type'] = $layerEntity->getSetting('layer_type');
+        }
+
+        if (isset($layerItem['layer_type']) && $layerItem['layer_type'] == 'overlay') {
+          if (isset($layer['on_by_default'])) {
+            $on_by_default = $layer['on_by_default'];
+            $layerItem['layer_hidden'] = !$on_by_default;
+          }
+          else {
+            $layerItem['layer_hidden'] = FALSE;
+          }
+
+        }
+
+        $item['layers'][$layer_name] = $layerItem;
+      }
+    }
+
+    // Make sure base layers come before overlays.
+    uasort($item['layers'], function ($a, $b) {
+      $aVal = isset($a['layer_type']) ? $a['layer_type'] : 'base';
+      $bVal = isset($b['layer_type']) ? $b['layer_type'] : 'base';
+
+      return strcmp($aVal, $bVal);
+    });
+
+
+    $hook_data[$bundle->id()] = $item;
+  }
+
+  return $hook_data;
+}
+
+/**
+ * Helper function to load plugin.
+ */
+function leaflet_layers_get_plugin_info($plugin_key) {
+  /** @var \Drupal\leaflet_layers\LayerTypePluginManager $pluginManager */
+  $pluginManager = \Drupal::service('plugin.manager.leaflet_layers');
+  try {
+    if ($pluginManager->hasDefinition($plugin_key)) {
+      $widget = $pluginManager->createInstance($plugin_key);
+      return $widget->getInfo();
+    }
+  }
+  catch (PluginException $e) {
+    return [];
+  }
+}

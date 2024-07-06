@@ -1,0 +1,39 @@
+views.display.geojson_export:
+  type: views_display_path
+  label: 'GeoJSON export display options'
+
+views.style.geojson:
+  type: views_style
+  label: 'GeoJSON output format'
+  mapping:
+    data_source:
+      type: mapping
+      label: 'Data Source'
+      mapping:
+        value:
+          type: string
+          label: 'Map Data Sources'
+        latitude:
+          type: string
+          label: 'Latitude Field'
+        longitude:
+          type: string
+          label: 'Longitude Field'
+        geofield:
+          type: string
+          label: 'Geofield'
+        geolocation:
+          type: string
+          label: 'Geolocation'
+        wkt:
+          type: string
+          label: 'WKT'
+        name_field:
+          type: string
+          label: 'Title Field'
+        description_field:
+          type: string
+          label: 'Description'
+    jsonp_prefix:
+      type: string
+      label: 'JSONP prefix'

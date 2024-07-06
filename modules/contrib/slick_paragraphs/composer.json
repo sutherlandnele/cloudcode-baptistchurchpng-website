@@ -1,0 +1,28 @@
+{
+  "name": "drupal/slick_paragraphs",
+  "description": "Provides Slick Carousel integration with Paragraphs.",
+  "keywords": ["carousel", "slideshow", "Paragraphs", "Drupal"],
+  "type": "drupal-module",
+  "license": "GPL-2.0-or-later",
+  "homepage": "https://drupal.org/project/slick_paragraphs",
+  "authors": [
+    {
+      "name": "Gaus Surahman",
+      "homepage": "https://www.drupal.org/u/gausarts",
+      "role": "Maintainer"
+    },
+    {
+      "name": "Contributors",
+      "homepage": "https://www.drupal.org/node/2791135/committers",
+      "role": "Contributor"
+    }
+  ],
+  "support": {
+    "issues": "https://drupal.org/project/issues/slick_paragraphs",
+    "source": "https://git.drupalcode.org/project/slick_paragraphs"
+  },
+  "require": {
+    "drupal/slick": "^3.0",
+    "drupal/paragraphs": "^1.0"
+  }
+}

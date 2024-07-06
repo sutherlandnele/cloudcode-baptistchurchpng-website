@@ -1,0 +1,10 @@
+entity.map_bundle.add_form:
+  route_name: entity.map_bundle.add_form
+  title: 'Add Map bundle'
+  appears_on:
+    - entity.map_bundle.collection
+entity.map_layer.add_form:
+  route_name: entity.map_layer.add_form
+  title: 'Add Map layer'
+  appears_on:
+    - entity.map_layer.collection

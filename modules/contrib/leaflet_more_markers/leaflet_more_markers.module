@@ -1,0 +1,241 @@
+<?php
+
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\Element;
+use Drupal\views\Plugin\views\cache\CachePluginBase;
+use Drupal\views\Plugin\views\row\RowPluginBase;
+use Drupal\views\ResultRow;
+use Drupal\views\ViewExecutable;
+
+/**
+ * Implements hook_field_widget_WIDGET_ID_form_alter().
+ *
+ * Called when the Map Marker field widget is rendered on the Content Edit page.
+ */
+function leaflet_more_markers_field_widget_map_marker_widget_form_alter(&$element, FormStateInterface $form_state, array $context) {
+  $element['#attached']['library'][] = 'leaflet_more_markers/leaflet_more_markers_form';
+  // Pass location of the data folder to js/leaflet_more_markers_emojipicker.js
+  $element['#attached']['drupalSettings']['leaflet_more_markers']['dataDir'] =
+    \Drupal::service('extension.list.module')->getPath('leaflet_more_markers') . '/data/';
+}
+
+/**
+ * Implements hook_entity_display_build_alter().
+ *
+ * Called when an entity (e.g. a node with a map) is about to be rendered.
+ */
+function leaflet_more_markers_entity_display_build_alter(array &$build, array $context) {
+  foreach (Element::children($build) as $field_name) {
+    $element = &$build[$field_name];
+    if (isset($element['#formatter']) && $element['#formatter'] == 'leaflet_formatter_default') {
+      if (isset($context['display']) && ($content = $context['display']->get('content'))) {
+        if (!empty($content[$field_name]['settings']['icon'])) {
+          $icon = $content[$field_name]['settings']['icon'];
+          if ($icon['iconType'] == 'html') {
+            // This field allows tokens, but these aren't rendered yet at this
+            // point. So we have to do that here to discover CSS class names.
+            $entity = $context['entity'];
+            $type = $entity->getEntityTypeId();
+            $field = $entity->get($field_name);
+            $token_data = [$type => $entity, 'field' => $field];
+            $icon_html = \Drupal::token()->replace($icon['html'], $token_data);
+            _leaflet_more_markers_attach_required_libs($element, $icon_html);
+          }
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_views_post_render().
+ *
+ * Called when Leaflet is used in a Views map rendering multiple markers on it.
+ */
+function leaflet_more_markers_views_post_render(ViewExecutable $view, array &$output, CachePluginBase $cache) {
+  if (empty($output['#rows']['#theme']) || $output['#rows']['#theme'] !== 'leaflet_map') {
+    // Not a View we're interested with.
+    return;
+  }
+  if (empty($output['#rows']['#attached']['drupalSettings']['leaflet'])) {
+    // Something wrong. Should not happen.
+    return;
+  }
+  foreach($output['#rows']['#attached']['drupalSettings']['leaflet'] as $map_data) {
+    if (!empty($map_data['features'])) {
+      foreach ($map_data['features'] as $feature) {
+        if (isset($feature['icon']['iconType']) && $feature['icon']['iconType'] == 'html') {
+          if (!empty($feature['icon']['html'])) {
+            _leaflet_more_markers_attach_required_libs($output, $feature['icon']['html']);
+          }
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_leaflet_formatter_feature_alter().
+ *
+ * Called when a marker is about to be rendered on a map.
+ */
+function leaflet_more_markers_leaflet_formatter_feature_alter(array &$feature, $item, $entity) {
+  _leaflet_more_markers_feature_alter($feature);
+}
+
+/**
+ * Implements hook_leaflet_views_feature_alter().
+ */
+function leaflet_more_markers_leaflet_views_feature_alter(array &$feature, ResultRow $result, RowPluginBase $row_plugin) {
+  if (empty($feature['icon']['iconType']) || $feature['icon']['iconType'] != 'html') {
+    return;
+  }
+  if ($entity = $result->_entity) {
+    // The call to viewsTokenReplace() in LeafletMap.php stuffs up the class
+    // attribute in <div class="...">...</div>
+    // Recover from the original View options. Then replace tokens, if any.
+    if (isset($row_plugin->view->style_plugin->options['icon'])) {
+      $icon_html = $row_plugin->view->style_plugin->options['icon']['html'];
+    }
+    else {
+      $icon_html = $feature['icon']['html'];
+    }
+    $entity_type = $entity->getEntityTypeId();
+    $field = NULL;
+    foreach ($entity->getFields() as $field) {
+      $field_type = $field->getFieldDefinition()->getType();
+      if ($field_type == 'geofield') {
+        break;
+      }
+    }
+    $token_data = [$entity_type => $entity, 'field' => $field];
+    $icon_html_tokens_replaced = \Drupal::token()->replace($icon_html, $token_data);
+    // Stick to the original data, possibly viewsTokenReplaced(), if above
+    // standard token replacement does not find any tokens to replace.
+    if ($icon_html_tokens_replaced !== $icon_html) {
+      $feature['icon']['html'] = $icon_html_tokens_replaced;
+    }
+  }
+  _leaflet_more_markers_feature_alter($feature);
+}
+
+/**
+ * Alters the supplied Leaflet marker's icon and popup anchors based on size.
+ *
+ * @param array $feature
+ *   The Leaflet feature (i.e. marker) to be altered.
+ */
+function _leaflet_more_markers_feature_alter(array &$feature) {
+  if (empty($feature['icon']['iconType']) || $feature['icon']['iconType'] != 'html' || empty($feature['icon']['html'])) {
+    return;
+  }
+  $icon = &$feature['icon'];
+  if (!strpos($icon['html'], 'class="lmm-icon')) {
+    // We are interested only in icons with lmm-icon class attributes.
+    return;
+  }
+
+  // Gather class names on the icon element.
+  if (!preg_match('/class="([\w\-\s]+)"/', $icon['html'], $classes)) {
+    // No class names. Something wrong with token substitution?
+    // Revert to default marker pin.
+    $icon['iconType'] = 'marker';
+    return;
+  }
+  $classes = empty($classes) ? [] : preg_split("/[\s]+/", $classes[1]);
+
+  $size = '';
+  $is_centered = FALSE;
+  $icon_offset_y = 0;
+
+  foreach ($classes as $class) {
+    // Parse class names like "yoffset-10" or "yoffset+5"
+    if (strcasecmp(substr($class, 0, 7),'yoffset') == 0) {
+      $icon_offset_y = intval(substr($class,7));
+      continue;
+    }
+    switch ($class) {
+      case 'center':
+      case 'centre':
+        $is_centered = TRUE;
+        break;
+      case 'large':
+        $size = 'large';
+        break;
+      case 'small':
+        $size = 'small';
+      default:
+    }
+  }
+
+  // Calculate vertical offset based on the classes on the icon element.
+  switch ($size) {
+    case 'large':
+      $popup_y = -66;
+      $offset_y = $is_centered ? -27 : 0;
+      break;
+    case'small':
+      $popup_y = -19;
+      $offset_y = $is_centered ? -7 : 0;
+      break;
+    default:
+      $popup_y = -33;
+      $offset_y = $is_centered ? -11 : 0;
+  }
+
+  if ($offset_y || $icon_offset_y) {
+    if (empty($icon['iconAnchor']['x'])) {
+      $icon['iconAnchor']['x'] = 0;
+    }
+    if (empty($icon['iconAnchor']['y'])) {
+      $icon['iconAnchor']['y'] = 0;
+    }
+    $icon['iconAnchor']['y'] += $icon_offset_y + $offset_y;
+  }
+
+  if (empty($icon['popupAnchor']['x'])) {
+    $icon['popupAnchor']['x'] = 0;
+  }
+  if (empty($icon['popupAnchor']['y'])) {
+    $icon['popupAnchor']['y'] = 0;
+  }
+  // Note the minus.
+  $icon['popupAnchor']['y'] += $popup_y - $offset_y;
+}
+
+/**
+ * Attach to the element the libraries required to render the icon.
+ *
+ * @param array $element
+ *   HTML element to which the libraries will be attached.
+ * @param $icon_html
+ *   HTML string for icon, typically something like <div class="...">..</div>
+ */
+function _leaflet_more_markers_attach_required_libs(array &$element, $icon_html) {
+  $lib_el = empty($element['#attached']['library']) ? NULL : $element['#attached']['library'];
+
+  // Load the generic CSS to set icon sizes and offsets.
+  if (!$lib_el || !in_array('leaflet_more_markers/leaflet_more_markers_display', $lib_el)) {
+    if (strpos($icon_html, 'lmm-icon') > 0) {
+      $element['#attached']['library'][] = 'leaflet_more_markers/leaflet_more_markers_display';
+    }
+  }
+  // If a Bootstrap icon class is used, load the associated icon CSS.
+  if (!$lib_el || !in_array('leaflet_more_markers/font_icons_bootstrap', $lib_el)) {
+    if (strpos($icon_html, ' bi bi-') > 0) {
+      $element['#attached']['library'][] = 'leaflet_more_markers/font_icons_bootstrap';
+    }
+  }
+  // If a Font Awesome icon class is used, load the associated icon CSS.
+  if (!$lib_el || !in_array('leaflet_more_markers/font_icons_fontawesome', $lib_el)) {
+    if (preg_match('/\s+fa[s|r|l|d|b]\s+fa\-/', $icon_html) > 0) {
+      $element['#attached']['library'][] = 'leaflet_more_markers/font_icons_fontawesome';
+    }
+  }
+  // If a Line Awesome icon class is used, load the associated icon CSS.
+  if (!$lib_el || !in_array('leaflet_more_markers/font_icons_lineawesome', $lib_el)) {
+    if (strpos($icon_html, ' la la-') > 0) {
+      $element['#attached']['library'][] = 'leaflet_more_markers/font_icons_lineawesome';
+    }
+  }
+}
