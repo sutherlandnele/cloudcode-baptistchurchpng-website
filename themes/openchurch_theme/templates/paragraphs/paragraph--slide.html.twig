@@ -1,0 +1,36 @@
+{#
+/**
+ * @file
+ * Custom template for Slide paragraph type to display in Bootstrap 5 cards.
+ */
+#}
+{%
+  set classes = [
+    'paragraph',
+    'paragraph--type--' ~ paragraph.bundle|clean_class,
+    view_mode ? 'paragraph--view-mode--' ~ view_mode|clean_class,
+    not paragraph.isPublished() ? 'paragraph--unpublished'
+  ]
+%}
+<div{{ attributes.addClass(classes) }}>
+  <div class="card m-3 h-100" style="width: 26rem; min-height: 24rem;">
+    {% if content.field_slide_image %}
+      {% set image_entity = content.field_slide_image[0]['#media'].field_media_image.entity %}
+      {% set image_url = file_url(image_entity.uri.value) %}
+      {% set image_alt = content.field_slide_image[0]['#media'].field_media_image[0].alt %}
+
+      <img src="{{ image_url }}" class="card-img-top img-fluid" alt="{{ image_alt }}" style="object-fit: cover; height: 200px; width: 100%;">
+    {% endif %}
+    <div class="card-body">
+      {% if content.field_slide_title %}
+        <h5 class="card-title">{{ content.field_slide_title }}</h5>
+      {% endif %}
+      {% if content.field_slide_body %}
+        <p class="card-text">{{ content.field_slide_body }}</p>
+      {% endif %}
+      {% if content.field_slide_link %}
+        <a href="{{ content.field_slide_link.0.url }}" class="btn btn-primary">Read more...</a>
+      {% endif %}
+    </div>
+  </div>
+</div>

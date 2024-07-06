@@ -97,7 +97,7 @@ parameters:
     #
     # Enabling auto-reload is not recommended in production environments.
     # @default null
-    auto_reload: null
+    auto_reload: false
     # Twig cache:
     #
     # By default, Twig templates will be compiled and stored in the filesystem

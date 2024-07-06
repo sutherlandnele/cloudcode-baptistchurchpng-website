@@ -63,3 +63,27 @@ footer h5 {
 .container-fluid {
   max-width: 1320px;
 }
+
+
+/* suthzy */
+
+/* Ensure button alignment and spacing */
+.navbar .btn-primary {
+  margin-left: auto;
+  order: 1; /* Make sure the button appears after the menu */
+  margin-top: 0.5rem !important; /* Adjust this value as needed for the desired space */
+  margin-bottom: 1rem;
+}
+
+@media (min-width: 992px) {
+  .navbar .btn-primary {
+    margin-top: 0; /* Reset top margin on larger screens */
+  }
+}
+
+.custom-heading-1 {
+  background: #ededed;
+    padding: 2rem;
+    border-radius: 0px 40px;
+}
+
